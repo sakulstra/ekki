@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { log, report } from '../../utils/logger'
+import { report } from 'utils/logger'
 import { handleClientAction } from './handler/clientActionHandler'
 import { ClientInput } from './handler/types'
 
