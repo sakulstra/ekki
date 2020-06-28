@@ -1,7 +1,7 @@
-)import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { log, report } from '../../utils/logger'
 import { handleClientAction } from './handler/clientActionHandler'
 import { ClientInput } from './handler/types'
-import { log, report } from '../../logger'
 
 export enum APP_EVENTS {
   pokerCall = 'poker_call',
@@ -9,20 +9,18 @@ export enum APP_EVENTS {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    log(req.body)
     const body = JSON.parse(req.body) as ClientInput
-    log(body)
     // eslint-disable-next-line @typescript-eslint/camelcase
     const { repo, owner, issue_number } = body.params
     const isValidWebhook = Object.values(APP_EVENTS).includes(body.type)
     if (isValidWebhook) {
       res.statusCode = 200
-      await handleClientAction(body)
+      const result = await handleClientAction(body)
       // eslint-disable-next-line @typescript-eslint/camelcase
       res.json({
         status: 'ok',
         // eslint-disable-next-line @typescript-eslint/camelcase
-        nextUrl: `https://github.com/${owner}/${repo}/issues/${issue_number}`,
+        nextUrl: result.data.html_url,
       })
     } else {
       res.statusCode = 401

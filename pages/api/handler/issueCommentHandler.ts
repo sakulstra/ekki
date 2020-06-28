@@ -1,5 +1,5 @@
 import { Webhooks } from '@octokit/webhooks'
-import { log } from '../../../logger'
+import { log } from '../../../utils/logger'
 import { getIssueContext } from './utils'
 import { startPoker, endPoker, estimate } from './poker'
 

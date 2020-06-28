@@ -1,6 +1,6 @@
 import { Webhooks } from '@octokit/webhooks'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { report } from '../../logger'
+import { report } from '../../utils/logger'
 import { handleIssueComment } from './handler/issueCommentHandler'
 
 const webhooks = new Webhooks({

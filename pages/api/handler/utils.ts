@@ -2,7 +2,7 @@ import { createAppAuth } from '@octokit/auth-app'
 import { request as baseRequest } from '@octokit/request'
 import { Webhooks } from '@octokit/webhooks'
 import numToWords from 'number-to-words'
-import { report } from '../../../logger'
+import { report } from '../../../utils/logger'
 import { IssueContext, HIDDEN, ClientContext } from './types'
 
 export const base64decode = (data: string | undefined) => {

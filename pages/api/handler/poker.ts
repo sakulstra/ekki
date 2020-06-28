@@ -102,7 +102,7 @@ export const call = async (context: ClientContext) => {
   const pokerMap = await getPokerMap(context)
   // modify state
   pokerMap.set(context.params.login, parseInt(context.params.value))
-  savePokerMap(context, pokerMap)
+  await savePokerMap(context, pokerMap)
 
   const pokerComment = await getComment(
     context,
