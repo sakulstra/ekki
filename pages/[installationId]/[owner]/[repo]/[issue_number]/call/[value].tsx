@@ -30,19 +30,13 @@ const Post = ({ data }) => {
   const [session, loading] = useSession()
   if (!session && !loading) signin('github')
 
-  const redirect = () => {
-    if (data?.nextUrl && typeof window !== 'undefined') {
-      window.location.href = data.nextUrl
-    }
-    return true
-  }
-
   return (
     <>
-      {session?.user && redirect && (
-        <p>Thank you for voting {session.user.email}</p>
-      )}
+      {session?.user && <p>Thank you for voting {session.user.email}</p>}
       {!session && <p>Signing in...</p>}
+      {typeof window !== 'undefined' &&
+        data.nextUrl &&
+        window.location.replace(data.nextUrl)}
     </>
   )
 }
