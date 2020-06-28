@@ -1,6 +1,7 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+)import { NextApiRequest, NextApiResponse } from 'next'
 import { handleClientAction } from './handler/clientActionHandler'
 import { ClientInput } from './handler/types'
+import { log, report } from '../../logger'
 
 export enum APP_EVENTS {
   pokerCall = 'poker_call',
@@ -8,9 +9,9 @@ export enum APP_EVENTS {
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    console.log(req.body)
-    const body = JSON.parse(req.body)
-    console.log(body)
+    log(req.body)
+    const body = JSON.parse(req.body) as ClientInput
+    log(body)
     // eslint-disable-next-line @typescript-eslint/camelcase
     const { repo, owner, issue_number } = body.params
     const isValidWebhook = Object.values(APP_EVENTS).includes(body.type)
@@ -32,7 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       })
     }
   } catch (e) {
-    console.error('could not verify webhook:', e)
+    report('could not verify webhook:', e)
     res.statusCode = 502
     res.json({ status: 'internal server error' })
   }

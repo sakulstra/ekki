@@ -1,4 +1,5 @@
 import { Webhooks } from '@octokit/webhooks'
+import { log } from '../../../logger'
 import { getIssueContext } from './utils'
 import { startPoker, endPoker, estimate } from './poker'
 
@@ -37,6 +38,6 @@ export const handleIssueComment = (
     if (action === ACTION.created && command === COMMAND.estimate)
       return estimate(context, params)
 
-    console.log('unhandled issue comment', action, command)
+    log('unhandled issue comment', action, command)
   }
 }

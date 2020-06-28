@@ -1,5 +1,6 @@
 import { Webhooks } from '@octokit/webhooks'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { report } from '../../logger'
 import { handleIssueComment } from './handler/issueCommentHandler'
 
 const webhooks = new Webhooks({
@@ -27,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.json({ status: 'not authorized' })
     }
   } catch (e) {
-    console.error('could not verify webhook:', e)
+    report('could not verify webhook:', e)
     res.statusCode = 502
     res.json({ status: 'internal server error' })
   }

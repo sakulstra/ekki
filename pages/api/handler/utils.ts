@@ -2,6 +2,7 @@ import { createAppAuth } from '@octokit/auth-app'
 import { request as baseRequest } from '@octokit/request'
 import { Webhooks } from '@octokit/webhooks'
 import numToWords from 'number-to-words'
+import { report } from '../../../logger'
 import { IssueContext, HIDDEN, ClientContext } from './types'
 
 export const base64decode = (data: string | undefined) => {
@@ -146,7 +147,7 @@ export const deleteComment = (
     comment_id: commentId || payload.comment.id,
   }).catch((err) => {
     if (err.status === 404) {
-      console.error('can not delete inexistent comment')
+      report('can not delete inexistent comment')
       return
     }
     throw err
