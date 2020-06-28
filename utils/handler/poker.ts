@@ -1,19 +1,16 @@
-import { COMMAND } from '@api/handler/issueCommentHandler'
-import { IssueContext, ClientContext } from '@api/handler/types'
+import { COMMAND } from '@utils/handler/issueCommentHandler'
+import { ClientContext } from '@utils/handler/types'
+import { IssueContext } from '@utils/github/context'
+import { saveToStore, getStore } from '@utils/github/store'
 import {
-  MarkdownText,
-  markdownUrl,
   deleteCommentsBulk,
   deleteComment,
   comment,
-  saveToStore,
-  getStore,
   getComment,
   replaceComment,
-  numberToWord,
-  collapsible,
-  getEstimations,
-} from './utils'
+} from '@utils/github/comment'
+import { MarkdownText, markdownUrl, collapsible } from '@utils/text'
+import { numberToWord, getEstimations } from '@utils/math'
 
 const allowedPokerValues = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 

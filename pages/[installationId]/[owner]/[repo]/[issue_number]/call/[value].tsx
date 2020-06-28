@@ -1,6 +1,6 @@
 import { getSession, useSession, signin } from 'next-auth/client'
 import { APP_EVENTS } from '@api/app-webhooks'
-import { ClientInput } from '@api/handler/types'
+import { ClientInput } from '@utils/handler/types'
 
 export async function getServerSideProps({ req, params }) {
   const session = await getSession({ req })

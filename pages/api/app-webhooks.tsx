@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { report } from 'utils/logger'
-import { handleClientAction } from '@api/handler/clientActionHandler'
-import { ClientInput } from '@api/handler/types'
+import { handleClientAction } from '@utils/handler/clientActionHandler'
+import { ClientInput } from '@utils/handler/types'
 
 export enum APP_EVENTS {
   pokerCall = 'poker_call',

@@ -1,7 +1,7 @@
 import { Webhooks } from '@octokit/webhooks'
 import { log } from '@utils/logger'
-import { getIssueContext } from '@api/handler/utils'
-import { startPoker, endPoker, estimate } from '@api/handler/poker'
+import { startPoker, endPoker, estimate } from '@utils/handler/poker'
+import { getIssueContext } from '@utils/github/context'
 
 export enum COMMAND {
   poker = '/poker',

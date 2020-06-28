@@ -1,7 +1,7 @@
 import { Webhooks } from '@octokit/webhooks'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { report } from '@utils/logger'
-import { handleIssueComment } from '@api/handler/issueCommentHandler'
+import { handleIssueComment } from '@utils/handler/issueCommentHandler'
 
 const webhooks = new Webhooks({
   secret: process.env.GITHUB_WEBHOOK_SECRET as string,
