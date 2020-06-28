@@ -5,13 +5,16 @@ export async function getServerSideProps(context) {
   const { query } = context
   const session = await getSession(context)
 
-  const res = await fetch('http://localhost:3000/api/app-webhooks', {
-    method: 'POST',
-    body: JSON.stringify({
-      type: APP_EVENTS.pokerCall,
-      params: { ...query, userId: session.user.id },
-    }),
-  })
+  const res = await fetch(
+    `${process.env.VERCEL_URL || process.env.BASE_URL}/api/app-webhooks`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: APP_EVENTS.pokerCall,
+        params: { ...query, userId: session.user.id },
+      }),
+    }
+  )
 
   const data = await res.json()
 

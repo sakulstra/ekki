@@ -20,4 +20,4 @@ yarn-error.log*
 
 # local
 .smee
-.env.prod
+.env.*
