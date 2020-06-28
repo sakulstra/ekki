@@ -1,0 +1,33 @@
+<template>
+  <section class="section">
+    nothing to see here. yet?
+  </section>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import { APP_EVENTS } from '~/serverMiddleware/app-webhooks'
+import { ClientInput } from '~/serverMiddleware/handler/types'
+
+export default Vue.extend({
+  async asyncData(context) {
+    const call = await (context as any).$axios.$post(
+      `${(context as any).$config.baseUrl}/app-webhooks`,
+      {
+        type: APP_EVENTS.pokerCall,
+        params: { ...context.route.params, login: context.$auth.user.login },
+      } as ClientInput
+    )
+    return { callback: call }
+  },
+  data() {
+    return {
+      callback: '',
+    }
+  },
+  mounted() {
+    // just forward to the generated callback uri immediately
+    window.location.href = this.callback
+  },
+})
+</script>

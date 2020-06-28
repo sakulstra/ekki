@@ -1,0 +1,35 @@
+import { Webhooks } from '@octokit/webhooks'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { handleIssueComment } from './handler/issueCommentHandler'
+
+const webhooks = new Webhooks({
+  secret: process.env.GITHUB_WEBHOOK_SECRET as string,
+})
+
+enum GITHUB_EVENTS {
+  issueComment = 'issue_comment',
+}
+
+const handler = (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const isValidWebhook = webhooks.verify(
+      req.body,
+      req.headers['x-hub-signature'] as string
+    )
+    const eventName = req.headers['x-github-event']
+    if (isValidWebhook) {
+      res.statusCode = 200
+      res.json({ status: 'ok' })
+      if (eventName === GITHUB_EVENTS.issueComment) handleIssueComment(req.body)
+    } else {
+      res.statusCode = 401
+      res.json({ status: 'not authorized' })
+    }
+  } catch (e) {
+    console.error('could not verify webhook:', e)
+    res.statusCode = 502
+    res.json({ status: 'internal server error' })
+  }
+}
+
+export default handler

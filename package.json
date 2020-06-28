@@ -4,7 +4,9 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "start-server-and-test dev:server http://localhost:3000 dev:smee",
+    "dev:server": "next dev",
+    "dev:smee": "smee -u $(cat .smee) -t http://localhost:3000/api/github-webhooks",
     "build": "next build",
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
@@ -26,9 +28,15 @@
     ]
   },
   "dependencies": {
+    "@octokit/auth-app": "^2.4.7",
+    "@octokit/request": "^5.4.5",
+    "@octokit/webhooks": "^7.6.4",
     "next": "latest",
+    "next-auth": "^2.2.0",
+    "number-to-words": "^1.2.4",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "swr": "^0.2.3"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",
@@ -47,6 +55,8 @@
     "jest-watch-typeahead": "^0.5.0",
     "lint-staged": "^10.0.10",
     "prettier": "^2.0.2",
+    "smee-client": "^1.1.0",
+    "start-server-and-test": "^1.11.0",
     "typescript": "^3.8.3"
   }
 }

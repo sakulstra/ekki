@@ -3,7 +3,8 @@ node_modules
 
 # next.js
 .next
-.env*.local
+.env
+.local
 
 # testing
 coverage
@@ -15,3 +16,8 @@ yarn-error.log*
 
 # misc
 .DS_Store
+.vercel
+
+# local
+.smee
+.env.prod
