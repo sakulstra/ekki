@@ -26,7 +26,6 @@ const Post = ({ data }) => {
     <>
       {session && <p>Signed in as {session.user.email}</p>}
       {!session && <p>Signing in...</p>}
-      {data?.nextUrl}
     </>
   )
 }
