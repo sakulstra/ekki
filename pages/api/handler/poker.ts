@@ -1,3 +1,5 @@
+import { COMMAND } from '@api/handler/issueCommentHandler'
+import { IssueContext, ClientContext } from '@api/handler/types'
 import {
   MarkdownText,
   markdownUrl,
@@ -12,8 +14,6 @@ import {
   collapsible,
   getEstimations,
 } from './utils'
-import { COMMAND } from './issueCommentHandler'
-import { IssueContext, ClientContext } from './types'
 
 const allowedPokerValues = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 

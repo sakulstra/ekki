@@ -1,21 +1,29 @@
 import { getSession, useSession, signin } from 'next-auth/client'
+import { APP_EVENTS } from '@api/app-webhooks'
+import { ClientInput } from '@api/handler/types'
 
-import { APP_EVENTS } from '../../../../../api/app-webhooks'
-import { postAppWebhook } from '../../../../../../utils/app-webhook-client'
-
-export async function getServerSideProps(context) {
-  const { query } = context
-  const session = await getSession(context)
-  const data = await postAppWebhook(APP_EVENTS.pokerCall, {
-    ...query,
-    userId: session.user.id,
-  })
-  return { props: { data } }
+export async function getServerSideProps({ req, params }) {
+  const session = await getSession({ req })
+  const data = await fetch(
+    `${process.env.VERCEL_URL || process.env.BASE_URL}/api/app-webhooks`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        type: APP_EVENTS.pokerCall,
+        params: {
+          ...params,
+          userId: session.user.id,
+        },
+      } as ClientInput),
+    }
+  ).then((res) => res.json())
+  return {
+    props: { data }, // will be passed to the page component as props
+  }
 }
 
 const Post = ({ data }) => {
   const [session, loading] = useSession()
-
   if (!session && !loading) signin('github')
 
   if (data?.nextUrl && typeof window !== 'undefined') {
@@ -24,7 +32,7 @@ const Post = ({ data }) => {
 
   return (
     <>
-      {session && <p>Signed in as {session.user.email}</p>}
+      {session?.user && <p>Thank you for voting {session.user.email}</p>}
       {!session && <p>Signing in...</p>}
     </>
   )

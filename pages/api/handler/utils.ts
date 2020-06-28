@@ -2,8 +2,8 @@ import { createAppAuth } from '@octokit/auth-app'
 import { request as baseRequest } from '@octokit/request'
 import { Webhooks } from '@octokit/webhooks'
 import numToWords from 'number-to-words'
-import { report } from '../../../utils/logger'
-import { IssueContext, HIDDEN, ClientContext } from './types'
+import { report } from '@utils/logger'
+import { IssueContext, HIDDEN, ClientContext } from '@api/handler/types'
 
 export const base64decode = (data: string | undefined) => {
   if (!data) throw new Error("can't decode undefined base64")
@@ -111,6 +111,7 @@ export const getComment = (
 ) => {
   return request('GET /repos/:owner/:repo/issues/comments/:comment_id', {
     ...issue,
+    // eslint-disable-next-line @typescript-eslint/camelcase
     comment_id: commentId,
   })
 }

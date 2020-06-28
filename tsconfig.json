@@ -15,7 +15,10 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@utils/*": ["./utils/*"]
+      "@utils/*": ["./utils/*"],
+      "@api/*": ["./pages/api/*"],
+      "@pages/*": ["./pages/*"],
+      "~/*": ["./*"]
     }
   },
   "exclude": ["node_modules", ".next", "out"],

@@ -2,7 +2,7 @@ import { RequestInterface } from '@octokit/auth-app/dist-types/types'
 import { Webhooks } from '@octokit/webhooks'
 import { APP_EVENTS } from '../app-webhooks'
 
-type ClientInputParams = {
+export type ClientInputParams = {
   owner: string
   repo: string
   // eslint-disable-next-line camelcase
