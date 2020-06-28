@@ -36,6 +36,7 @@ export const getIssueContext = (
     issue: {
       owner: webhook.repository.owner.login,
       repo: webhook.repository.name,
+      // eslint-disable-next-line @typescript-eslint/camelcase
       issue_number: webhook.issue.number,
     },
   }
@@ -44,7 +45,7 @@ export const getIssueContext = (
 export const numberToWord = (input: number) => numToWords.toWords(input)
 
 export class MarkdownText {
-  content: string = ''
+  content = ''
   public get = () => this.content.trim()
 
   constructor(firstLine?: string) {
@@ -141,7 +142,14 @@ export const deleteComment = (
 ) => {
   return request('DELETE /repos/:owner/:repo/issues/comments/:comment_id', {
     ...issue,
+    // eslint-disable-next-line @typescript-eslint/camelcase
     comment_id: commentId || payload.comment.id,
+  }).catch((err) => {
+    if (err.status === 404) {
+      console.error('can not delete inexistent comment')
+      return
+    }
+    throw err
   })
 }
 
@@ -149,10 +157,12 @@ export const replaceComment = (
   { issue, request }: IssueContext | ClientContext,
   body: string,
   // eslint-disable-next-line camelcase
+  // eslint-disable-next-line @typescript-eslint/camelcase
   comment_id: number
 ) => {
   return request('PATCH /repos/:owner/:repo/issues/comments/:comment_id', {
     ...issue,
+    // eslint-disable-next-line @typescript-eslint/camelcase
     comment_id,
     body,
   })
@@ -185,14 +195,16 @@ export const saveStore = async (
 ) => {
   const currentIssue = await getIssue(context)
   let resultBody = currentIssue.data.body
-  const before = resultBody.split(HIDDEN.storeStart)[0] || ''
-  const after = resultBody.split(HIDDEN.storeStop)[1] || ''
+  const before =
+    resultBody.split(HIDDEN.storeStart(context.installationId))[0] || ''
+  const after =
+    resultBody.split(HIDDEN.storeStop(context.installationId))[1] || ''
   resultBody =
     before.trim() +
     '\n\n' +
-    HIDDEN.storeStart +
+    HIDDEN.storeStart(context.installationId) +
     JSON.stringify(Array.from(store)) +
-    HIDDEN.storeStop +
+    HIDDEN.storeStop(context.installationId) +
     '\n\n' +
     after.trim()
   return updateIssue(context, resultBody.trim())
@@ -210,11 +222,11 @@ export const saveToStore = async (
 export const getStore = async (context: IssueContext | ClientContext) => {
   const currentIssue = await getIssue(context)
   const resultBody = currentIssue.data.body
-  if (!resultBody.includes(HIDDEN.storeStart))
+  if (!resultBody.includes(HIDDEN.storeStart(context.installationId)))
     return new Map<string, string | number>()
   const rawStore = resultBody
-    .split(HIDDEN.storeStart)[1]
-    .split(HIDDEN.storeStop)[0]
+    .split(HIDDEN.storeStart(context.installationId))[1]
+    .split(HIDDEN.storeStop(context.installationId))[0]
     .trim()
   return new Map<string, string | number>(JSON.parse(rawStore))
 }

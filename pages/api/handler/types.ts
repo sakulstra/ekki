@@ -38,7 +38,9 @@ export type ClientContext = WebhookContext & {
   }
 }
 
-export enum HIDDEN {
-  storeStart = '<!-- ekki:store:start ',
-  storeStop = ' ekki:store:stop -->',
+export const HIDDEN = {
+  storeStart: (installationId: string) =>
+    `<!-- ekki:${installationId}:store:start `,
+  storeStop: (installationId: string) =>
+    ` ekki:${installationId}:store:stop -->`,
 }

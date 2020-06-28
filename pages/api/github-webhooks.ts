@@ -10,7 +10,7 @@ enum GITHUB_EVENTS {
   issueComment = 'issue_comment',
 }
 
-const handler = (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const isValidWebhook = webhooks.verify(
       req.body,
@@ -19,8 +19,9 @@ const handler = (req: NextApiRequest, res: NextApiResponse) => {
     const eventName = req.headers['x-github-event']
     if (isValidWebhook) {
       res.statusCode = 200
+      if (eventName === GITHUB_EVENTS.issueComment)
+        await handleIssueComment(req.body)
       res.json({ status: 'ok' })
-      if (eventName === GITHUB_EVENTS.issueComment) handleIssueComment(req.body)
     } else {
       res.statusCode = 401
       res.json({ status: 'not authorized' })

@@ -8,11 +8,8 @@ import {
   getStore,
   getComment,
   replaceComment,
-  average,
-  closestInArray,
   numberToWord,
   collapsible,
-  median,
   getEstimations,
 } from './utils'
 import { COMMAND } from './issueCommentHandler'
@@ -25,10 +22,13 @@ export enum SAVE_KEYS {
   POKER_COMMENT_ID = 'POKER_COMMENT_ID',
 }
 
-enum POKER_HIDDENTEXT {
-  deleteReset = '<!-- ekki:deleteResetPoker -->',
-  pokerResultStart = '<!-- ekki:pokerResult:start -->',
-  pokerResultEnd = '<!-- ekki:pokerResult:end -->',
+const POKER_HIDDENTEXT = {
+  deleteReset: (installationId: string) =>
+    `<!-- ekki:${installationId}:deleteResetPoker -->`,
+  pokerResultStart: (installationId: string) =>
+    `<!-- ekki:${installationId}:pokerResult:start -->`,
+  pokerResultEnd: (installationId: string) =>
+    `<!-- ekki:${installationId}:pokerResult:end -->`,
 }
 
 const savePokerMap = (
@@ -47,7 +47,9 @@ const getPokerMapFromString = (pokermapString: string) =>
 const resetPoker = (context: IssueContext) => {
   return Promise.all([
     // remove all poker-related comments
-    deleteCommentsBulk(context, [POKER_HIDDENTEXT.deleteReset]),
+    deleteCommentsBulk(context, [
+      POKER_HIDDENTEXT.deleteReset(context.installationId),
+    ]),
     // overwrite the poker results map
     savePokerMap(context, new Map<string, number>()),
   ])
@@ -72,9 +74,10 @@ export const startPoker = async (context: IssueContext) => {
           .join(', ')}**`
     )
     .addLine(`- comment \`${COMMAND.show}\` to end the round`)
-    .addLine(POKER_HIDDENTEXT.deleteReset)
+    .addLine(POKER_HIDDENTEXT.deleteReset(context.installationId))
     .addLine(
-      POKER_HIDDENTEXT.pokerResultStart + POKER_HIDDENTEXT.pokerResultEnd
+      POKER_HIDDENTEXT.pokerResultStart(installationId) +
+        POKER_HIDDENTEXT.pokerResultEnd(installationId)
     )
     .get()
   const result = await comment(context, body)
@@ -86,8 +89,10 @@ export const startPoker = async (context: IssueContext) => {
 
 export const getPokerMap = async (context: IssueContext | ClientContext) => {
   const currentStore = await getStore(context)
-  return getPokerMapFromString(
-    currentStore.get(SAVE_KEYS.POKER_RESULT_MAP) as string
+  return (
+    getPokerMapFromString(
+      currentStore.get(SAVE_KEYS.POKER_RESULT_MAP) as string
+    ) || new Map<string, number>()
   )
 }
 
@@ -108,7 +113,9 @@ export const call = async (context: ClientContext) => {
   } already voted: @${Array.from(pokerMap.keys()).join(', @')}`
   const newBody = pokerComment.data.body.replace(
     new RegExp(
-      `${POKER_HIDDENTEXT.pokerResultStart}.*${POKER_HIDDENTEXT.pokerResultEnd}`
+      `${POKER_HIDDENTEXT.pokerResultStart(
+        context.installationId
+      )}.*${POKER_HIDDENTEXT.pokerResultEnd(context.installationId)}`
     ),
     userVotedString
   )
@@ -147,7 +154,7 @@ export const endPoker = async (context: IssueContext) => {
     .addLine(`- enter \`/estimate\` to log the *median*`)
     .addLine(`- enter \`/estimate <value>\` to log a custom value`)
     .addLine(collapsible(table.join('\n'), 'details'))
-    .addLine(POKER_HIDDENTEXT.deleteReset)
+    .addLine(POKER_HIDDENTEXT.deleteReset(context.installationId))
     .get()
 
   await replaceComment(

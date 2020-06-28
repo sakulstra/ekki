@@ -22,7 +22,7 @@ export async function getServerSideProps(context) {
 }
 
 const Post = ({ data }) => {
-  return <p>Post: {data}</p>
+  return <p>nothing to see here yet {JSON.stringify(data)}</p>
 }
 
 export default Post
