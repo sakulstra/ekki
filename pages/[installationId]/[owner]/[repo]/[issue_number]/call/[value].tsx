@@ -1,4 +1,5 @@
-import { getSession } from 'next-auth/client'
+import { getSession, useSession, signin } from 'next-auth/client'
+
 import { APP_EVENTS } from '../../../../../api/app-webhooks'
 import { postAppWebhook } from '../../../../../../utils/app-webhook-client'
 
@@ -13,13 +14,20 @@ export async function getServerSideProps(context) {
 }
 
 const Post = ({ data }) => {
-  if (typeof window !== 'undefined') {
+  const [session, loading] = useSession()
+
+  if (!session && !loading) signin('github')
+
+  if (data?.nextUrl && typeof window !== 'undefined') {
     window.location.href = data.nextUrl
   }
+
   return (
-    <p>
-      nothing to see here yet <pre>{JSON.stringify(data)}</pre>
-    </p>
+    <>
+      {session && <p>Signed in as {session.user.email}</p>}
+      {!session && <p>Signing in...</p>}
+      {data?.nextUrl}
+    </>
   )
 }
 
