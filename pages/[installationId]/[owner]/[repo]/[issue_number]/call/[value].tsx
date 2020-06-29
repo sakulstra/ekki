@@ -1,25 +1,17 @@
-import { useSession, signin } from 'next-auth/client'
+import { useSession, signin, getSession } from 'next-auth/client'
 import { APP_EVENTS } from '@api/app-webhooks'
 import { ClientInput } from '@utils/handler/types'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import fetch from 'unfetch'
 
 type ResultComponentProps = {
   query: any
   session: any
 }
 
-export const Result: FunctionComponent<ResultComponentProps> = ({
-  query,
-  session,
-}) => {
-  const [data, setData] = useState({
-    nextUrl: null,
-  })
-
-  useEffect(() => {
-    fetch(`/api/app-webhooks`, {
+const postVote = async (query, session) => {
+  return (
+    await fetch(`/api/app-webhooks`, {
       method: 'POST',
       body: JSON.stringify({
         type: APP_EVENTS.pokerCall,
@@ -28,18 +20,27 @@ export const Result: FunctionComponent<ResultComponentProps> = ({
           userId: session.user.id,
         },
       } as ClientInput),
-    }).then(async (res) => {
-      setData(await res.json())
+    })
+  ).json()
+}
+
+export const Result: FunctionComponent<ResultComponentProps> = ({
+  query,
+  session,
+}) => {
+  const [nextUrl, setNextUrl] = useState<string>()
+
+  useEffect(() => {
+    postVote(query, session).then(async ({ nextUrl }) => {
+      setNextUrl(nextUrl)
+      window.location.replace(nextUrl)
     })
   }, [])
 
   return (
     <>
-      {!data.nextUrl && <p>sending poker result</p>}
-      {data.nextUrl && <pre>{JSON.stringify(data)}</pre>}
-      {typeof window !== 'undefined' &&
-        data.nextUrl &&
-        window.location.replace(data.nextUrl)}
+      {!nextUrl && <p>sending poker result</p>}
+      {nextUrl && <pre>redirecting to: {nextUrl}</pre>}
     </>
   )
 }
@@ -54,6 +55,19 @@ const Post = () => {
       {session && <Result query={query} session={session} />}
     </>
   )
+}
+
+Post.getInitialProps = async (context) => {
+  const { res, query } = context
+  const session = await getSession(context)
+  if (session && res) {
+    const { nextUrl } = await (await postVote(query, session)).json()
+    if (nextUrl) {
+      res.writeHead(301, { Location: nextUrl })
+      res.end()
+    }
+  }
+  return {}
 }
 
 export default Post
