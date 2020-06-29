@@ -3,6 +3,7 @@ import { APP_EVENTS } from '@api/app-webhooks'
 import { ClientInput } from '@utils/handler/types'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import fetch from 'unfetch'
 
 type ResultComponentProps = {
   query: any

@@ -36,7 +36,8 @@
     "number-to-words": "^1.2.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "swr": "^0.2.3"
+    "swr": "^0.2.3",
+    "unfetch": "^4.1.0"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.1",
