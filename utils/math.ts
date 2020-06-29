@@ -18,7 +18,7 @@ export const closestInArray = (needle: number, haystack: number[]) => {
 export const average = (values: number[]) =>
   values.reduce((pre, acc) => pre + acc) / values.length
 
-export const median = (values: number[]) => {
+export const medianNear = (values: number[], allowed: number[]) => {
   if (values.length === 0) return 0
 
   values.sort(function (a, b) {
@@ -29,7 +29,8 @@ export const median = (values: number[]) => {
 
   if (values.length % 2) return values[half]
 
-  return (values[half - 1] + values[half]) / 2.0
+  const result = (values[half - 1] + values[half]) / 2.0
+  return closestInArray(result, allowed)
 }
 
 export const getEstimations = (
@@ -39,7 +40,7 @@ export const getEstimations = (
   const avg = average(Array.from(pokerMap.values()))
   return {
     avg,
-    median: median(Array.from(pokerMap.values())),
+    median: medianNear(Array.from(pokerMap.values()), allowed),
     near: closestInArray(avg, allowed),
   }
 }
