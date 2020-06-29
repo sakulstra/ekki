@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { report } from 'utils/logger'
+import { report, log } from 'utils/logger'
 import { handleClientAction } from '@utils/handler/clientActionHandler'
 import { ClientInput } from '@utils/handler/types'
 
@@ -10,9 +10,11 @@ export enum APP_EVENTS {
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const body = JSON.parse(req.body) as ClientInput
+    log(body)
     // eslint-disable-next-line @typescript-eslint/camelcase
     const { repo, owner, issue_number } = body.params
     const isValidWebhook = Object.values(APP_EVENTS).includes(body.type)
+
     if (isValidWebhook) {
       res.statusCode = 200
       const result = await handleClientAction(body)
@@ -22,17 +24,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // eslint-disable-next-line @typescript-eslint/camelcase
         nextUrl: result.data.html_url,
       })
-    } else {
-      res.statusCode = 401
+    }
+
+    if (!isValidWebhook) {
+      res.statusCode = 400
+      report('could not verify webhook:', body)
       res.json({
-        status: 'not authorized',
+        status: 'unknown operation',
+        type: body.type,
         // eslint-disable-next-line @typescript-eslint/camelcase
         nextUrl: `https://github.com/${owner}/${repo}/issues/${issue_number}`,
       })
     }
   } catch (e) {
-    report('could not verify webhook:', e)
-    res.statusCode = 502
+    res.statusCode = 500
+    report('could not perform operation', e)
     res.json({ status: 'internal server error' })
   }
 }
