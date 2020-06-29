@@ -8,6 +8,7 @@ import {
   comment,
   getComment,
   replaceComment,
+  hideComment,
 } from '@utils/github/comment'
 import { MarkdownText, markdownUrl, collapsible } from '@utils/text'
 import { numberToWord, getEstimations } from '@utils/math'
@@ -168,7 +169,7 @@ export const estimate = async (context: IssueContext, params: string[]) => {
   // cleanup
   await deleteComment(context)
   const currentStore = await getStore(context)
-  await deleteComment(
+  await hideComment(
     context,
     currentStore.get(SAVE_KEYS.POKER_COMMENT_ID) as number
   )

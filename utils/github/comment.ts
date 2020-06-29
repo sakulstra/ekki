@@ -36,6 +36,41 @@ export const deleteComment = (
   })
 }
 
+export const hideComment = async (
+  context: IssueContext,
+  commentId?: number
+) => {
+  const comment = await getComment(context, commentId)
+  return context
+    .request('POST /graphql', {
+      query: `mutation MinimizeComment($input: MinimizeCommentInput!) {
+      minimizeComment(input: $input) {
+        minimizedComment {
+          isMinimized
+        }
+      }
+    }`,
+      variables: {
+        input: {
+          subjectId: comment.data.node_id,
+          classifier: 'OUTDATED',
+        },
+      },
+    })
+    .catch((err) => {
+      if (err.status === 404) {
+        report('can not hide inexistent comment')
+        return
+      }
+      throw err
+    })
+    .then((res) => {
+      if ((res as any).data.errors) {
+        throw new Error((res as any).data)
+      }
+      return res
+    })
+}
 export const replaceComment = (
   { issue, request }: IssueContext | ClientContext,
   body: string,
