@@ -11,7 +11,7 @@ type ResultComponentProps = {
 
 const postVote = async (query, session) => {
   return (
-    await fetch(`/api/app-webhooks`, {
+    await fetch(process.env.BASE_URL + `/api/app-webhooks`, {
       method: 'POST',
       body: JSON.stringify({
         type: APP_EVENTS.pokerCall,
@@ -61,7 +61,7 @@ Post.getInitialProps = async (context) => {
   const { res, query } = context
   const session = await getSession(context)
   if (session && res) {
-    const { nextUrl } = await (await postVote(query, session)).json()
+    const { nextUrl } = await postVote(query, session)
     if (nextUrl) {
       res.writeHead(301, { Location: nextUrl })
       res.end()
