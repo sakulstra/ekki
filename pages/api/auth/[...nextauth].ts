@@ -1,10 +1,11 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
+import { baseUrl } from '@utils/constants'
 
 // For more information on options, go to
 // https://next-auth.js.org/configuration/options
 const options = {
-  site: process.env.VERCEL_URL || process.env.BASE_URL,
+  site: baseUrl,
   providers: [
     Providers.GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,

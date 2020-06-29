@@ -3,6 +3,7 @@ import { APP_EVENTS } from '@api/app-webhooks'
 import { ClientInput } from '@utils/handler/types'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { baseUrl } from '@utils/constants'
 
 type ResultComponentProps = {
   query: any
@@ -11,7 +12,7 @@ type ResultComponentProps = {
 
 const postVote = async (query, session) => {
   return (
-    await fetch(process.env.BASE_URL + `/api/app-webhooks`, {
+    await fetch(baseUrl + `/api/app-webhooks`, {
       method: 'POST',
       body: JSON.stringify({
         type: APP_EVENTS.pokerCall,

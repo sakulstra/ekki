@@ -13,6 +13,7 @@ import {
 import { MarkdownText, markdownUrl, collapsible } from '@utils/text'
 import { numberToWord, getEstimations } from '@utils/math'
 import { debug } from '@utils/logger'
+import { baseUrl } from '@utils/constants'
 
 const allowedPokerValues = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 
@@ -53,8 +54,6 @@ const resetPoker = (context: IssueContext) => {
     savePokerMap(context, new Map<string, number>()),
   ])
 }
-
-const baseUrl = process.env.VERCEL_URL || process.env.BASE_URL
 
 export const startPoker = async (context: IssueContext) => {
   const { issue, installationId } = context
