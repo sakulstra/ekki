@@ -5,6 +5,7 @@ export const Home = (): JSX.Element => {
 
   return (
     <p>
+      {process.env.VERCEL_URL || 'fart'}
       {!session && (
         <>
           Not signed in <br />
