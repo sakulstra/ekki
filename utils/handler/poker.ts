@@ -101,6 +101,7 @@ export const call = async (context: ClientContext) => {
   const pokerMap = await getPokerMap(context)
   // modify state
   pokerMap.set(context.params.login, parseInt(context.params.value))
+  debug(pokerMap)
   await savePokerMap(context, pokerMap)
 
   const pokerComment = await getComment(
@@ -110,14 +111,14 @@ export const call = async (context: ClientContext) => {
   const userVotedString = `- **${numberToWord(pokerMap.size)}** user${
     pokerMap.size > 1 ? 's' : ''
   } already voted: @${Array.from(pokerMap.keys()).join(', @')}`
+  debug(userVotedString)
+  const before = POKER_HIDDENTEXT.pokerResultStart(context.installationId)
+  const after = POKER_HIDDENTEXT.pokerResultEnd(context.installationId)
   const newBody = pokerComment.data.body.replace(
-    new RegExp(
-      `${POKER_HIDDENTEXT.pokerResultStart(
-        context.installationId
-      )}.*${POKER_HIDDENTEXT.pokerResultEnd(context.installationId)}`
-    ),
-    userVotedString
+    new RegExp(before + '\n*(.*)\n*' + after),
+    before + '\n' + userVotedString + '\n' + after
   )
+  debug(newBody)
   return replaceComment(
     context,
     newBody,
