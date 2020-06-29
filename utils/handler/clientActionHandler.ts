@@ -4,6 +4,7 @@ import { APP_EVENTS } from '@api/app-webhooks'
 import { ClientInput, ClientContext } from '@utils/handler/types'
 import { call } from '@utils/handler/poker'
 import { base64decode } from '@utils/common'
+import { debug } from '@utils/logger'
 
 const getClientContext = async (
   clientInput: ClientInput
@@ -24,7 +25,7 @@ const getClientContext = async (
     },
   })
 
-  return {
+  const context = {
     request: requestWithAuth,
     params: {
       ...clientInput.params,
@@ -40,6 +41,9 @@ const getClientContext = async (
       issue_number: parseInt(clientInput.params.issue_number),
     },
   }
+
+  debug('got client context', context)
+  return context
 }
 
 export const handleClientAction = async (input: ClientInput) => {

@@ -11,6 +11,7 @@ import {
 } from '@utils/github/comment'
 import { MarkdownText, markdownUrl, collapsible } from '@utils/text'
 import { numberToWord, getEstimations } from '@utils/math'
+import { debug } from '@utils/logger'
 
 const allowedPokerValues = [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
 
@@ -94,6 +95,7 @@ export const getPokerMap = async (context: IssueContext | ClientContext) => {
 }
 
 export const call = async (context: ClientContext) => {
+  debug('received a call')
   // get state
   const currentStore = await getStore(context)
   const pokerMap = await getPokerMap(context)
